@@ -18,13 +18,13 @@ Default skill command:
 `/speckit-specify`
 
 Script:
-Use `agent-benchmark/scripts/run-baseline.sh` to prepare the run directory and
-optionally call Claude Code.
+Use `agent-benchmark/scripts/run-agent.sh --role baseline --agent claude-code`
+to prepare the run directory and optionally call Claude Code.
 
 Examples:
 ```sh
-agent-benchmark/scripts/run-baseline.sh --id 01 --setup-only
-agent-benchmark/scripts/run-baseline.sh --id habit-tracker-baseline --prompt "I need a simple habit tracker where I can define habits, record daily completion, and see progress over time."
+agent-benchmark/scripts/run-agent.sh --role baseline --agent claude-code --id 01 --setup-only
+agent-benchmark/scripts/run-agent.sh --role baseline --agent claude-code --id habit-tracker-baseline --prompt "I need a simple habit tracker where I can define habits, record daily completion, and see progress over time."
 ```
 
 Required checks:

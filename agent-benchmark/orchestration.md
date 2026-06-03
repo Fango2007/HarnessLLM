@@ -14,39 +14,36 @@ instruction file by the runner.
 
 Run sequence:
 1. Select one scenario prompt from `scenarios.md`.
-2. Create a fresh baseline run under `runs/baseline/<run-id>/`.
-3. Inside the baseline run, install Spec Kit without Git integration:
-   `specify init --integration claude --script sh --here --force --no-git`
-4. Persist the baseline prompt trace under `runs/baseline/<run-id>/_benchmark/`.
-5. Call Claude Code with the selected `/speckit-specify` scenario prompt.
-6. Treat the generated Spec Kit directory and files as the baseline output.
-7. Score the baseline once using `evaluation/scoring-rubric.md` and store the
+2. Create a fresh baseline run with `scripts/run-agent.sh --role baseline`.
+3. Persist the baseline prompt trace under `runs/baseline/<run-id>/_benchmark/`.
+4. Treat the generated Spec Kit directory and files as the baseline output.
+5. Score the baseline once using `evaluation/scoring-rubric.md` and store the
    frozen assessment under
    `reports/baselines/<scenario-id>/<baseline-run-id>.assessment.md`.
-8. Create a fresh candidate run under `runs/candidate/<run-id>/`.
-9. Inside the candidate run, install Spec Kit without Git integration using the
-   selected candidate integration.
-10. Let `scripts/run-candidate.sh` prepare agent-specific runtime files.
-11. If the selected iteration has a candidate patch, append it to the correct
-   run-local instruction file:
-   - Vibe patches from `prompts/variants/agents-patches/` append to `AGENTS.md`.
-   - Claude Code patches from `prompts/variants/claude-patches/` append to
-     `CLAUDE.md`.
-12. Persist the candidate prompt trace under
-    `runs/candidate/<run-id>/_benchmark/`.
-13. Call the selected candidate agent through `scripts/run-candidate.sh`.
-14. Treat the generated Spec Kit directory and files as the candidate output.
-15. Use the `boost-agent-outcomes` skill to compare the candidate output against
+6. Create a fresh candidate run with `scripts/run-agent.sh --role candidate`.
+7. If the selected iteration has a candidate patch, the runner appends it to the
+   correct run-local instruction file.
+8. Persist the candidate prompt trace under
+   `runs/candidate/<run-id>/_benchmark/`.
+9. Treat the generated Spec Kit directory and files as the candidate output.
+10. Use the `boost-agent-outcomes` skill to compare the candidate output against
     the frozen baseline assessment. Do not rescore the baseline during candidate
     iteration.
-16. If the comparison finds actionable candidate improvements, create the next
+11. If the comparison finds actionable candidate improvements, create the next
     prepared patch under the selected agent's patch family directory.
-17. Record the prepared next patch in the comparison report.
-18. Append the score and decision to `reports/score-ledger.jsonl`.
-19. Update `reports/latest-comparison.md`.
-20. Replay the candidate run with the new patch.
-21. Stop when the candidate comparison finds no further actionable prompt
+12. Record the prepared next patch in the comparison report.
+13. Append the score and decision to `reports/score-ledger.jsonl`.
+14. Update `reports/latest-comparison.md`.
+15. Replay the candidate run with the new patch.
+16. Stop when the candidate comparison finds no further actionable prompt
     improvements or when the configured stop rule is reached.
+
+Patch targets:
+- If the selected iteration has a candidate patch, append it to the correct
+  run-local instruction file:
+  - Vibe patches from `prompts/variants/agents-patches/` append to `AGENTS.md`.
+  - Claude Code patches from `prompts/variants/claude-patches/` append to
+    `CLAUDE.md`.
 
 Prompt variant policy:
 - Vibe AGENTS patches are stored under `prompts/variants/agents-patches/` and

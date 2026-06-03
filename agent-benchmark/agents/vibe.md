@@ -33,14 +33,14 @@ Default skill command:
 `/speckit-specify`
 
 Script:
-Use `agent-benchmark/scripts/run-candidate.sh` to prepare the run directory and
-optionally call Vibe.
+Use `agent-benchmark/scripts/run-agent.sh --role candidate --agent vibe` to
+prepare the run directory and optionally call Vibe.
 
 Examples:
 ```sh
-agent-benchmark/scripts/run-candidate.sh --id 02 --setup-only
-agent-benchmark/scripts/run-candidate.sh --id 01 --agents-patch agent-candidate-v001.md --setup-only
-agent-benchmark/scripts/run-candidate.sh --id habit-tracker-v001 --prompt "I need a simple habit tracker where I can define habits, record daily completion, and see progress over time."
+agent-benchmark/scripts/run-agent.sh --role candidate --agent vibe --id 02 --setup-only
+agent-benchmark/scripts/run-agent.sh --role candidate --agent vibe --id 01 --patch agent-candidate-v001.md --setup-only
+agent-benchmark/scripts/run-agent.sh --role candidate --agent vibe --id habit-tracker-v001 --prompt "I need a simple habit tracker where I can define habits, record daily completion, and see progress over time."
 ```
 
 Required checks:
