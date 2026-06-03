@@ -1,7 +1,7 @@
 # Comparison Method
 
-This document defines how to compare Claude Code baseline outputs against Vibe
-candidate outputs.
+This document defines how to compare frozen baseline outputs against candidate
+agent outputs.
 
 ## Inputs
 
@@ -14,8 +14,11 @@ Each comparison uses:
   `reports/baselines/<scenario-id>/<baseline-run-id>.assessment.md`.
 - Candidate run directory under `runs/candidate/<run-id>/`.
 - Candidate prompt trace under `runs/candidate/<run-id>/_benchmark/`.
-- Candidate AGENTS patch under `prompts/variants/agents-patches/`, if used.
-- Local Vibe logs under `runs/candidate/<run-id>/.vibe/logs/session/`.
+- Candidate patch under the agent-specific patch directory, if used:
+  - Vibe: `prompts/variants/agents-patches/`
+  - Claude Code: `prompts/variants/claude-patches/`
+- Local agent logs, when the candidate agent writes them. Vibe logs are under
+  `runs/candidate/<run-id>/.vibe/logs/session/`.
 - Score ledger at `reports/score-ledger.jsonl`.
 
 ## Procedure
@@ -36,7 +39,7 @@ Each comparison uses:
    - unclear.
 7. Penalize shared defects consistently. Do not use a defect as evidence that
    the candidate is worse when the baseline has the same defect.
-8. Inspect local Vibe logs only when needed to explain workflow behavior,
+8. Inspect local agent logs only when needed to explain workflow behavior,
    stalls, tool failures, or missing artifacts.
 9. Score only the candidate using `scoring-rubric.md`; copy the baseline score,
    category breakdown, findings, and assessment ID from the frozen baseline
@@ -45,9 +48,9 @@ Each comparison uses:
    - stronger output patterns in the baseline,
    - candidate weaknesses,
    - shared defects that require harness-level validation,
-   - AGENTS-patch-fixable gaps,
+   - candidate-patch-fixable gaps,
    - non-prompt-fixable failures,
-   - whether a new candidate AGENTS patch is justified.
+   - whether a new candidate patch is justified.
 11. Apply `acceptance-thresholds.md` to decide whether to stop or continue.
 12. Write the comparison report under `reports/comparisons/`.
 13. Append the score record to `reports/score-ledger.jsonl`.
@@ -70,9 +73,9 @@ When a baseline and candidate share a defect, the comparison report must either:
 - explicitly exclude the defect from the relative candidate-vs-baseline
   criticism and record it as a shared harness/process issue.
 
-AGENTS patch recommendations must not be generated from shared defects unless
-the recommendation is explicitly framed as improving both outputs or adding an
-external validation gate to the harness.
+Candidate patch recommendations must not be generated from shared defects
+unless the recommendation is explicitly framed as improving both outputs or
+adding an external validation gate to the harness.
 
 ## Report Naming
 
@@ -99,17 +102,17 @@ Each comparison report must include:
 - Baseline assessment ID.
 - Baseline prompt trace paths.
 - Candidate run ID.
-- Candidate AGENTS patch, if any.
+- Candidate patch, if any.
 - Candidate prompt trace paths.
 - Baseline artifact paths.
 - Candidate artifact paths.
-- Vibe local log path.
+- Agent local log path, if applicable.
 - Baseline score.
 - Candidate score.
 - Score delta from previous candidate, if any.
 - Findings ordered by severity.
 - `boost-agent-outcomes` summary.
-- Recommended AGENTS patch changes, if any.
+- Recommended candidate patch changes, if any.
 - Continue or stop decision.
 - Stop reason, if stopping.
 
@@ -130,7 +133,7 @@ Baseline runs must include:
 - `_benchmark/automation-system-prompt.txt`,
 - `_benchmark/output-format.txt`.
 
-Candidate runs must include:
+Candidate runs must include these common trace files:
 
 - `_benchmark/run-id.txt`,
 - `_benchmark/run-type.txt`,
@@ -138,13 +141,26 @@ Candidate runs must include:
 - `_benchmark/skill-command.txt`,
 - `_benchmark/scenario-prompt.txt`,
 - `_benchmark/agent-prompt.txt`,
+- `_benchmark/candidate-patch.txt`,
+- `_benchmark/candidate-patch-source.txt`, when a patch is used,
+- `_benchmark/output-format.txt`.
+
+Vibe candidate runs also include:
+
 - `_benchmark/system-prompt-source.txt`,
 - `_benchmark/run-system-prompt.txt`,
 - `_benchmark/config-source.txt`,
 - `_benchmark/run-config.txt`,
 - `_benchmark/agents-patch.txt`,
-- `_benchmark/agents-patch-source.txt`, when a patch is used,
-- `_benchmark/output-format.txt`.
+- `_benchmark/agents-patch-source.txt`, when a patch is used.
+
+Claude Code candidate runs also include:
+
+- `_benchmark/model.txt`,
+- `_benchmark/automation-system-prompt.txt`,
+- `_benchmark/run-instructions.txt`,
+- `_benchmark/claude-patch.txt`,
+- `_benchmark/claude-patch-source.txt`, when a patch is used.
 
 Do not infer the experiment prompt from terminal history, `latest-comparison.md`,
 or memory. The `_benchmark/agent-prompt.txt` file is the prompt that was sent to
@@ -217,16 +233,22 @@ immutable. Do not edit its score or findings in place. If the rubric, fairness
 rule, or artifact interpretation changes, create a new assessment file with a
 new assessment ID and record which earlier assessment it supersedes.
 
-## AGENTS Patch Improvement Rule
+## Candidate Patch Improvement Rule
 
-Do not author improvements directly in run-local files such as `AGENTS.md`.
+Do not author reusable improvements directly in run-local files such as
+`AGENTS.md` or `CLAUDE.md`.
 
-All candidate AGENTS patch changes must be stored as versioned patches under:
+All candidate patch changes must be stored as versioned patches under the
+candidate agent's patch family directory:
 
 ```text
 prompts/variants/agents-patches/
+prompts/variants/claude-patches/
 ```
 
-Before a candidate run, the original Vibe system prompt is copied into the
+For Vibe candidate runs, the original Vibe system prompt is copied into the
 run-local Vibe home as `.vibe/prompts/system-prompt.md`. The selected AGENTS
 patch is appended to run-local `AGENTS.md`.
+
+For Claude Code candidate runs, the selected CLAUDE patch is appended to the
+run-local `CLAUDE.md` created by Spec Kit.

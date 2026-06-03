@@ -13,6 +13,8 @@ agent-benchmark/reports/latest-comparison.md
 
 # Generated prompt-optimization outputs.
 agent-benchmark/prompts/best-candidate.md
+agent-benchmark/prompts/best-candidates.md
+agent-benchmark/prompts/best-candidates/
 agent-benchmark/prompts/variants/metadata.md
 agent-benchmark/prompts/variants/agents-patches/
 agent-benchmark/prompts/variants/claude-patches/

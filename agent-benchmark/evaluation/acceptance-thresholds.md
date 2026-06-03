@@ -1,8 +1,7 @@
 # Acceptance Thresholds
 
-This document defines when a candidate AGENTS patch is good enough to keep,
-when the optimization loop should continue, and when the iteration process is
-over.
+This document defines when a candidate patch is good enough to keep, when the
+optimization loop should continue, and when the iteration process is over.
 
 ## Scoring Scale
 
@@ -11,7 +10,7 @@ rubric.
 
 - **Baseline score**: frozen score from the persisted Claude Code baseline
   assessment for the scenario.
-- **Candidate score**: Vibe output for the same scenario and AGENTS patch.
+- **Candidate score**: candidate-agent output for the same scenario and patch.
 - **Raw delta**: candidate score minus the previous candidate score for the
   same scenario.
 - **Relative delta**: raw delta divided by the previous candidate score for the
@@ -82,23 +81,23 @@ rubric issues.
 Continue the optimization loop when all of these are true:
 
 - The latest candidate run completed successfully.
-- `boost-agent-outcomes` identifies at least one actionable AGENTS-patch-level
+- `boost-agent-outcomes` identifies at least one actionable candidate-patch-level
   improvement.
 - The suggested improvement is likely to affect a material rubric category.
 - The latest candidate score did not regress relative to the previous candidate
   for the same scenario.
 - The configured maximum iteration count, if any, has not been reached.
 
-AGENTS-patch-level improvements include changes to the candidate run-local
+Candidate-patch-level improvements include changes to the candidate run-local
 instructions that could improve workflow compatibility, artifact quality,
-validation discipline, or reporting without changing the original Vibe system
-prompt.
+validation discipline, or reporting without changing the candidate agent's base
+prompt or global configuration.
 
 ## Stop Criteria
 
 Stop iterating when any of these conditions is met:
 
-- `boost-agent-outcomes` finds no actionable AGENTS-patch-level improvement.
+- `boost-agent-outcomes` finds no actionable candidate-patch-level improvement.
 - The latest candidate score regresses relative to the previous candidate for
   the same scenario.
 - The candidate meets or exceeds the Claude Code baseline and remaining
@@ -106,7 +105,7 @@ Stop iterating when any of these conditions is met:
 - The configured maximum iteration count is reached.
 
 Small positive improvements and flat non-regressing scores do not stop the loop
-by themselves. If there is still an actionable AGENTS-patch-level improvement,
+by themselves. If there is still an actionable candidate-patch-level improvement,
 continue iterating until a regression, baseline parity with preference-only
 differences, no actionable improvement, or the configured maximum iteration
 count.
@@ -121,8 +120,11 @@ Non-prompt-fixable defects include:
 
 ## Best Candidate Selection
 
-The best candidate is the highest-scoring accepted patch that also satisfies
-the stop criteria.
+The best candidate is selected per candidate agent, patch family, and scenario.
+Do not use one global best patch when multiple candidate agents are tested.
+
+The best candidate for a given agent is the highest-scoring accepted patch that
+also satisfies the stop criteria.
 
 If two accepted patches have the same score, choose the one with:
 
@@ -131,7 +133,8 @@ If two accepted patches have the same score, choose the one with:
 3. Simpler prompt changes.
 4. Earlier version number.
 
-Record the selected patch in `prompts/best-candidate.md`.
+Record selected patches in `prompts/best-candidates.md`, with one row per
+candidate agent and patch family.
 
 ## Required Stop Record
 
@@ -141,7 +144,7 @@ When the loop stops, the final comparison report must include:
 - Baseline run ID.
 - Baseline assessment ID.
 - Candidate run ID.
-- Candidate AGENTS patch, if any.
+- Candidate patch, if any.
 - Baseline score.
 - Candidate score.
 - Score delta from the previous candidate.

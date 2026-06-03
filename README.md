@@ -111,7 +111,7 @@ Reusable harness files should be committed:
 
 Generated run outputs and result artifacts should not be published. The repo
 `.gitignore` excludes run directories, generated reports, ledgers, latest-result
-snapshots, and generated candidate patches.
+snapshots, generated candidate patches, and generated best-candidate pointers.
 
 If a generated result needs to be shared, summarize it in a durable document
 rather than committing the full run workspace.
