@@ -1,6 +1,6 @@
 # Acceptance Thresholds
 
-This document defines when a candidate prompt variant is good enough to keep,
+This document defines when a candidate AGENTS patch is good enough to keep,
 when the optimization loop should continue, and when the iteration process is
 over.
 
@@ -9,14 +9,28 @@ over.
 Each comparison produces a score from 0 to 100 using the benchmark scoring
 rubric.
 
-- **Baseline score**: Claude Code output for the scenario.
-- **Candidate score**: Vibe output for the same scenario and prompt variant.
-- **Delta**: candidate score minus the previous candidate score for the same
-  scenario.
+- **Baseline score**: frozen score from the persisted Claude Code baseline
+  assessment for the scenario.
+- **Candidate score**: Vibe output for the same scenario and AGENTS patch.
+- **Raw delta**: candidate score minus the previous candidate score for the
+  same scenario.
+- **Relative delta**: raw delta divided by the previous candidate score for the
+  same scenario.
+- **Cumulative relative delta**: latest candidate score minus the initial
+  candidate score for the same scenario, divided by the initial candidate
+  score.
+- **Remaining-gap reduction**: raw delta divided by the previous candidate's
+  remaining gap to 100.
+- **Log progress delta**:
+  `ln((100 - previous_candidate_score) / (100 - candidate_score))`.
+- **Cumulative log progress delta**:
+  `ln((100 - initial_candidate_score) / (100 - latest_candidate_score))`.
+- **Baseline assessment**: frozen baseline score and findings persisted under
+  `reports/baselines/<scenario-id>/<baseline-run-id>.assessment.md`.
 
 ## Minimum Candidate Acceptance
 
-A candidate variant is acceptable only if all of these are true:
+A candidate patch is acceptable only if all of these are true:
 
 - It completes the full required workflow for the scenario.
 - It produces all expected artifacts.
@@ -25,6 +39,15 @@ A candidate variant is acceptable only if all of these are true:
 - It is not more than 5 points below the Claude Code baseline for the same
   scenario.
 
+The Claude Code baseline must be scored once before candidate iteration starts.
+Candidate comparisons must reuse the frozen baseline assessment and must not
+rescore the baseline. If a defect appears in both outputs, it must not be counted
+as a candidate-only defect.
+
+If the baseline assessment is found to be wrong, do not edit it in place after
+it has been used. Create a new versioned baseline assessment, record what it
+supersedes, and use the new assessment for later comparisons.
+
 If the candidate fails to complete the workflow or misses required artifacts,
 the run is not acceptable regardless of score.
 
@@ -32,40 +55,61 @@ the run is not acceptable regardless of score.
 
 An iteration counts as a noticeable improvement only when both are true:
 
-- The candidate score improves by at least 3 points over the previous candidate
-  variant for the same scenario.
+- The candidate improves by at least `0.05` log-progress points over the
+  previous candidate for the same scenario, or the latest accepted candidate
+  improves by at least `0.10` cumulative log-progress points over the initial
+  candidate for the same scenario.
 - The improvement addresses at least one material issue identified by
   `boost-agent-outcomes`.
+- The improvement is not merely a correction of an issue that was also present
+  in the baseline unless the same penalty or harness-level note is applied to
+  the baseline.
 
 Changes that only alter wording, formatting, or style do not count as noticeable
 improvements unless they also improve clarity, completeness, testability, or
 artifact quality in a way reflected by the rubric.
+
+Use log progress instead of fixed raw-score thresholds because candidates often
+begin near the upper end of the 100-point scale. The log function estimates
+progress against the shrinking remaining gap to 100, so the same raw score gain
+counts more when the candidate is already strong. For example, a move from 84 to
+86 closes 12.5% of the remaining gap and has a cumulative log-progress delta of
+`0.1335`, so it should be recognized as a real gain when it addresses material
+rubric issues.
 
 ## Continue Criteria
 
 Continue the optimization loop when all of these are true:
 
 - The latest candidate run completed successfully.
-- `boost-agent-outcomes` identifies at least one actionable prompt-level
+- `boost-agent-outcomes` identifies at least one actionable AGENTS-patch-level
   improvement.
 - The suggested improvement is likely to affect a material rubric category.
-- The candidate has not already met the stop criteria below.
+- The latest candidate score did not regress relative to the previous candidate
+  for the same scenario.
+- The configured maximum iteration count, if any, has not been reached.
 
-Prompt-level improvements include changes to the candidate system prompt that
-could improve reasoning, workflow completion, artifact quality, requirements
-coverage, validation discipline, or reporting.
+AGENTS-patch-level improvements include changes to the candidate run-local
+instructions that could improve workflow compatibility, artifact quality,
+validation discipline, or reporting without changing the original Vibe system
+prompt.
 
 ## Stop Criteria
 
 Stop iterating when any of these conditions is met:
 
-- `boost-agent-outcomes` finds no actionable prompt-level improvement.
-- The candidate score improves by less than 3 points for two consecutive
-  candidate variants on the same scenario.
+- `boost-agent-outcomes` finds no actionable AGENTS-patch-level improvement.
+- The latest candidate score regresses relative to the previous candidate for
+  the same scenario.
 - The candidate meets or exceeds the Claude Code baseline and remaining
   differences are preference-only.
-- Remaining defects are not prompt-fixable.
 - The configured maximum iteration count is reached.
+
+Small positive improvements and flat non-regressing scores do not stop the loop
+by themselves. If there is still an actionable AGENTS-patch-level improvement,
+continue iterating until a regression, baseline parity with preference-only
+differences, no actionable improvement, or the configured maximum iteration
+count.
 
 Non-prompt-fixable defects include:
 
@@ -77,17 +121,17 @@ Non-prompt-fixable defects include:
 
 ## Best Candidate Selection
 
-The best candidate is the highest-scoring accepted variant that also satisfies
+The best candidate is the highest-scoring accepted patch that also satisfies
 the stop criteria.
 
-If two accepted variants have the same score, choose the one with:
+If two accepted patches have the same score, choose the one with:
 
 1. Fewer critical or major findings.
 2. Better workflow reliability.
 3. Simpler prompt changes.
 4. Earlier version number.
 
-Record the selected variant in `prompts/best-candidate.md`.
+Record the selected patch in `prompts/best-candidate.md`.
 
 ## Required Stop Record
 
@@ -95,11 +139,20 @@ When the loop stops, the final comparison report must include:
 
 - Scenario ID.
 - Baseline run ID.
+- Baseline assessment ID.
 - Candidate run ID.
-- Candidate prompt variant.
+- Candidate AGENTS patch, if any.
 - Baseline score.
 - Candidate score.
 - Score delta from the previous candidate.
+- Whether the score regressed.
+- Relative score delta from the previous candidate.
+- Cumulative relative score delta from the initial candidate.
+- Remaining-gap reduction from the previous candidate.
+- Log progress delta from the previous candidate.
+- Cumulative log progress delta from the initial candidate.
+- Score ledger record ID.
 - `boost-agent-outcomes` summary.
+- Shared-defect classification summary.
 - Stop reason.
 - Whether the selected candidate is accepted.

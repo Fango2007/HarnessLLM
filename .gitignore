@@ -1,0 +1,17 @@
+.DS_Store
+
+# Benchmark run workspaces and local agent state.
+agent-benchmark/runs/
+
+# Generated benchmark results. Keep the report folder structure, but do not
+# publish per-run assessments, comparisons, ledgers, or latest-result snapshots.
+agent-benchmark/reports/baselines/
+agent-benchmark/reports/comparisons/*
+!agent-benchmark/reports/comparisons/.gitkeep
+agent-benchmark/reports/score-ledger.jsonl
+agent-benchmark/reports/latest-comparison.md
+
+# Generated prompt-optimization outputs.
+agent-benchmark/prompts/best-candidate.md
+agent-benchmark/prompts/variants/metadata.md
+agent-benchmark/prompts/variants/agents-patches/

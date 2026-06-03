@@ -9,20 +9,22 @@ Runtime setup:
   `specify init --integration vibe --script sh --here --force --no-git`
 - Create `.vibe/prompts/`.
 - Copy `agent-benchmark/agents/vibe-config.toml` to `.vibe/config.toml`.
-- Select a prepared candidate prompt from `agent-benchmark/prompts/variants/`.
-- Copy and rename that prompt variant to `.vibe/prompts/system-prompt.md`.
-- Record the selected variant in `.vibe/prompt-variant.txt`.
+- Copy the original Vibe system prompt from
+  `agent-benchmark/prompts/system-prompt-vibe.md` to
+  `.vibe/prompts/system-prompt.md`.
+- Optionally append a prepared AGENTS patch from
+  `agent-benchmark/prompts/variants/agents-patches/` to the run-local
+  `AGENTS.md`.
+- Record the system prompt source in `.vibe/system-prompt-source.txt`.
+- Record the selected AGENTS patch in `.vibe/agents-patch.txt` when one is used.
 
-Prompt variants:
+Prompt and patch policy:
 - `agent-benchmark/prompts/system-prompt-vibe.md` is the original reference prompt.
-- Candidate prompts that will be evaluated and optimized must be prepared under
-  `agent-benchmark/prompts/variants/`.
-- Run-local candidate prompts must always be named `.vibe/prompts/system-prompt.md`
+- Run-local system prompts must always be named `.vibe/prompts/system-prompt.md`
   because `agents/vibe-config.toml` expects `system_prompt_id = "system-prompt"`.
-- The initial candidate variant is
-  `agent-benchmark/prompts/variants/system-candidate-v001.md`.
-- New improved variants should be created with
-  `agent-benchmark/scripts/create-candidate-variant.py`.
+- The system prompt stays unchanged during optimization.
+- Candidate improvements are prepared as AGENTS patches under
+  `agent-benchmark/prompts/variants/agents-patches/`.
 
 Command pattern:
 `vibe -p "$SKILL_COMMAND $SCENARIO_PROMPT" --trust --agent auto-approve --output streaming`
@@ -37,9 +39,8 @@ optionally call Vibe.
 Examples:
 ```sh
 agent-benchmark/scripts/run-candidate.sh --id 02 --setup-only
-agent-benchmark/scripts/run-candidate.sh --id 02 --variant system-candidate-v002.md --setup-only
+agent-benchmark/scripts/run-candidate.sh --id 01 --agents-patch agent-candidate-v001.md --setup-only
 agent-benchmark/scripts/run-candidate.sh --id habit-tracker-v001 --prompt "I need a simple habit tracker where I can define habits, record daily completion, and see progress over time."
-agent-benchmark/scripts/create-candidate-variant.py improved-system-prompt.md
 ```
 
 Required checks:

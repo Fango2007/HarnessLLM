@@ -42,6 +42,23 @@ next_run_id() {
   done
 }
 
+write_prompt_trace() {
+  local trace_dir
+
+  trace_dir="${RUN_DIR}/_benchmark"
+  mkdir -p "${trace_dir}"
+
+  printf '%s\n' "${RUN_ID}" > "${trace_dir}/run-id.txt"
+  printf '%s\n' "baseline" > "${trace_dir}/run-type.txt"
+  printf '%s\n' "claude-code" > "${trace_dir}/agent.txt"
+  printf '%s\n' "sonnet" > "${trace_dir}/model.txt"
+  printf '%s\n' "${SKILL_COMMAND}" > "${trace_dir}/skill-command.txt"
+  printf '%s\n' "${SCENARIO_PROMPT}" > "${trace_dir}/scenario-prompt.txt"
+  printf '%s\n' "${CLAUDE_PROMPT}" > "${trace_dir}/agent-prompt.txt"
+  printf '%s\n' "${CLAUDE_AUTOMATION_PROMPT}" > "${trace_dir}/automation-system-prompt.txt"
+  printf '%s\n' "stream-json" > "${trace_dir}/output-format.txt"
+}
+
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --id)
@@ -103,6 +120,8 @@ fi
 
 CLAUDE_PROMPT="${SKILL_COMMAND} ${SCENARIO_PROMPT}"
 CLAUDE_AUTOMATION_PROMPT="Automation requirement: execute the entire requested Spec Kit workflow in this invocation. Create the feature spec and requirements checklist before final response. Do not initialize Git, create Git branches, or execute Git hooks."
+
+write_prompt_trace
 
 (
   cd "${RUN_DIR}"
