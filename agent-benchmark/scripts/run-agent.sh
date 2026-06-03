@@ -49,8 +49,8 @@ Patch aliases:
   patch file. Agent choice determines the patch directory and run-local target.
 
 Examples:
-  run-agent.sh --role baseline --agent claude-code --id scenario-002-claude-augmented-baseline --patch claude-candidate-v001.md --prompt "I need a simple habit tracker..."
-  run-agent.sh --role candidate --agent vibe --id scenario-002-vibe-agent-candidate-v002 --patch agent-candidate-v002.md --prompt "I need a simple habit tracker..."
+  run-agent.sh --role baseline --agent claude-code --id scenario-001-claude-baseline --prompt "Create a simple to-do list app..."
+  run-agent.sh --role candidate --agent vibe --id scenario-001-vibe-agent-candidate-v002 --patch agent-candidate-v002.md --prompt "Create a simple to-do list app..."
   run-agent.sh --role candidate --agent claude-code --id todo-claude-v001 --patch claude-candidate-v001.md --setup-only
 USAGE
 }

@@ -32,6 +32,8 @@ rubric.
 A candidate patch is acceptable only if all of these are true:
 
 - It completes the full required workflow for the scenario.
+- It follows the loaded Spec Kit skill workflow and produces artifacts in the
+  expected skill/template shape.
 - It produces all expected artifacts.
 - It has no unresolved critical defects in the generated output.
 - Its score is at least 80 out of 100.
@@ -92,6 +94,11 @@ Candidate-patch-level improvements include changes to the candidate run-local
 instructions that could improve workflow compatibility, artifact quality,
 validation discipline, or reporting without changing the candidate agent's base
 prompt or global configuration.
+
+Candidate-patch-level improvements must be compatible with the loaded Spec Kit
+skill. Do not continue optimization based on a proposed patch that forbids a
+skill-required or skill-encouraged pattern unless the framework first changes
+the skill/template or scoring rubric.
 
 ## Stop Criteria
 

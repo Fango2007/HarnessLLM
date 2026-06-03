@@ -2,7 +2,7 @@
 
 Goal:
 Optimize candidate-agent prompt or instruction patches against a frozen
-baseline for the same Spec Kit `/speckit-specify` scenario prompts.
+baseline for the same Spec Kit skill command and scenario prompt.
 
 Principle:
 Candidate guidance should remain agnostic. It may define how the candidate
@@ -12,11 +12,22 @@ or checklist semantics. Reusable compatibility patches should be stored under
 `prompts/variants/` and appended into the candidate agent's run-local
 instruction file by the runner.
 
+The loaded Spec Kit skill is part of the benchmark objective. Evaluations and
+patches should optimize for skill-compliant artifact quality, not for an
+unstated preference such as minimal scenario-only specifications. If a candidate
+follows a selected skill's required structure, examples, artifact semantics, or
+validation pattern, treat that as valid unless the generated content conflicts
+with the scenario, leaks implementation detail, is unreasonable for that skill,
+or overclaims artifact quality.
+
 Run sequence:
-1. Select one scenario prompt from `scenarios.md`.
+1. Select one scenario prompt and one Spec Kit skill command. The default
+   current skill command is `/speckit-specify`, but the same framework applies
+   to other Spec Kit skills when their prerequisite artifacts are present.
 2. Create a fresh baseline run with `scripts/run-agent.sh --role baseline`.
 3. Persist the baseline prompt trace under `runs/baseline/<run-id>/_benchmark/`.
-4. Treat the generated Spec Kit directory and files as the baseline output.
+4. Treat the generated Spec Kit directory and skill-required files as the
+   baseline output.
 5. Score the baseline once using `evaluation/scoring-rubric.md` and store the
    frozen assessment under
    `reports/baselines/<scenario-id>/<baseline-run-id>.assessment.md`.
@@ -25,7 +36,8 @@ Run sequence:
    correct run-local instruction file.
 8. Persist the candidate prompt trace under
    `runs/candidate/<run-id>/_benchmark/`.
-9. Treat the generated Spec Kit directory and files as the candidate output.
+9. Treat the generated Spec Kit directory and skill-required files as the
+   candidate output.
 10. Use the `boost-agent-outcomes` skill to compare the candidate output against
     the frozen baseline assessment. Do not rescore the baseline during candidate
     iteration.
@@ -77,8 +89,10 @@ Storage policy:
 - Do not edit a baseline assessment after it has been cited by a comparison
   report. If baseline scoring needs correction, create a new assessment with a
   new assessment ID and explicitly supersede the old one.
+- Record the selected skill command in baseline assessments, comparison
+  reports, and score-ledger rows so multi-skill results are not conflated.
 
 Example:
 ```sh
-agent-benchmark/scripts/run-agent.sh --role candidate --agent vibe --id scenario-002-vibe-agent-candidate-v002 --patch agent-candidate-v002.md --prompt "I need a simple habit tracker..."
+agent-benchmark/scripts/run-agent.sh --role candidate --agent vibe --id scenario-001-vibe-agent-candidate-v002 --patch agent-candidate-v002.md --prompt "Create a simple to-do list app..."
 ```

@@ -5,9 +5,15 @@ baseline run against candidate prompt or instruction variants on the same task.
 The goal is not to crown a model. The goal is to make prompt changes measurable,
 repeatable, and tied to generated artifacts instead of anecdotes.
 
-The workflow is built around Spec Kit feature-generation scenarios. Each run
-receives the same scenario prompt, produces a specification and checklist, and
-is scored with the same rubric.
+The workflow is built around Spec Kit skill scenarios. Each run receives the
+same scenario prompt and skill command, produces the artifacts required by that
+skill, and is scored with the same rubric.
+
+The task is to follow the selected Spec Kit skill, not to produce an arbitrary
+evaluator-preferred artifact style. Skill-required or skill-encouraged patterns
+should be penalized only when they conflict with the scenario, leak
+implementation detail, are unreasonable for the selected skill, or make the
+agent overclaim artifact quality.
 
 Although the current setup uses small application specification prompts, the
 same workflow can be adapted for other use cases where a stable baseline,
@@ -22,13 +28,13 @@ expected Spec Kit artifacts and prompt traces.
 
 ## What The Workflow Measures
 
-Each output is scored from 0 to 100 across:
+Each output is scored from 0 to 100 across skill-relative dimensions:
 
 - workflow completion
-- requirement quality
-- user scenarios and acceptance criteria
-- scope, assumptions, and edge cases
-- success criteria
+- artifact quality
+- scenario and acceptance coverage, when applicable
+- scope, assumptions, and edge cases, when applicable
+- measurable outcomes or validation criteria, when applicable
 - validation discipline
 
 The baseline is scored once and then frozen. Candidate runs are compared against
@@ -40,6 +46,11 @@ the baseline or candidate agent being judged. In this harness, that evaluator
 uses the [`boost-agent-outcomes`](https://github.com/Fango2007/AI-Skills) skill
 to identify baseline strengths, candidate weaknesses, shared defects,
 prompt-fixable gaps, and stop/continue decisions.
+
+The evaluator must use the explicit comparison frame: assess how well each
+output follows the selected Spec Kit skill for the same scenario and skill
+command. Do not treat a skill-compliant pattern as a defect merely because a
+different skill or stricter artifact style would avoid it.
 
 ## Optimization Loop
 

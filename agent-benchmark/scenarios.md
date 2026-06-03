@@ -8,8 +8,6 @@ replay across a frozen baseline and candidate optimization passes.
 
 1. Create a simple to-do list app where I can add tasks, mark tasks as complete, edit task names, and delete tasks I no longer need. The app should show active and completed tasks separately.
 
-2. I need a simple habit tracker where I can define habits, record daily completion, and see progress over time. The app should allow habits to be added, paused, renamed, and archived without losing past records.
-
 3. Create a small app that helps me manage books I want to read, books I am reading, and books I have finished. I should be able to rate finished books, add short notes, and filter the list by reading status.
 
 4. I need a meal planning app where I can plan meals for each day of the week and keep a reusable list of recipes. The app should let me assign recipes to days and generate a shopping list from the planned meals.

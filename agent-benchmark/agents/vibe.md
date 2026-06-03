@@ -40,7 +40,7 @@ Examples:
 ```sh
 agent-benchmark/scripts/run-agent.sh --role candidate --agent vibe --id 02 --setup-only
 agent-benchmark/scripts/run-agent.sh --role candidate --agent vibe --id 01 --patch agent-candidate-v001.md --setup-only
-agent-benchmark/scripts/run-agent.sh --role candidate --agent vibe --id habit-tracker-v001 --prompt "I need a simple habit tracker where I can define habits, record daily completion, and see progress over time."
+agent-benchmark/scripts/run-agent.sh --role candidate --agent vibe --id todo-v001 --prompt "Create a simple to-do list app where I can add tasks, mark tasks as complete, edit task names, and delete tasks I no longer need."
 ```
 
 Required checks:
