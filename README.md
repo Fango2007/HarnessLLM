@@ -14,6 +14,12 @@ same workflow can be adapted for other use cases where a stable baseline,
 repeatable candidate runs, artifact scoring, and non-regression tracking are
 useful.
 
+## Supported CLI Integrations
+
+The current harness works with Claude Code and Vibe CLI. Either integration can
+be used in the baseline or candidate role as long as the run produces the
+expected Spec Kit artifacts and prompt traces.
+
 ## What The Workflow Measures
 
 Each output is scored from 0 to 100 across:
