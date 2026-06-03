@@ -1,5 +1,11 @@
 # Small Application Feature Prompts
 
+<!--
+Purpose: This file is the reusable scenario pool for benchmark runs. Each
+numbered prompt should be agent-agnostic, product-focused, and stable enough to
+replay across a frozen baseline and candidate optimization passes.
+-->
+
 1. Create a simple to-do list app where I can add tasks, mark tasks as complete, edit task names, and delete tasks I no longer need. The app should show active and completed tasks separately.
 
 2. I need a simple habit tracker where I can define habits, record daily completion, and see progress over time. The app should allow habits to be added, paused, renamed, and archived without losing past records.
