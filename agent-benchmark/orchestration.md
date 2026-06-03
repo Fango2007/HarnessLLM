@@ -80,5 +80,5 @@ Storage policy:
 
 Example:
 ```sh
-agent-benchmark/scripts/create-agents-patch.py improved-agents-patch.md
+agent-benchmark/scripts/run-agent.sh --role candidate --agent vibe --id scenario-002-vibe-agent-candidate-v002 --patch agent-candidate-v002.md --prompt "I need a simple habit tracker..."
 ```
