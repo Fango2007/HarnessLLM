@@ -15,3 +15,4 @@ agent-benchmark/reports/latest-comparison.md
 agent-benchmark/prompts/best-candidate.md
 agent-benchmark/prompts/variants/metadata.md
 agent-benchmark/prompts/variants/agents-patches/
+agent-benchmark/prompts/variants/claude-patches/
