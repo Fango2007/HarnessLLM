@@ -1,20 +1,25 @@
 .DS_Store
 
 # Benchmark run workspaces and local agent state.
-agent-benchmark/runs/
+agent-benchmark/6-runs/1-baseline/
+agent-benchmark/6-runs/2-candidate/
 
-# Generated benchmark results. Keep the report folder structure, but do not
-# publish per-run assessments, comparisons, ledgers, or latest-result snapshots.
-agent-benchmark/reports/baselines/
-agent-benchmark/reports/comparisons/*
-!agent-benchmark/reports/comparisons/.gitkeep
-agent-benchmark/reports/score-ledger.jsonl
-agent-benchmark/reports/latest-comparison.md
+# Generated benchmark result snapshots.
+agent-benchmark/7-reports/score-ledger.jsonl
+agent-benchmark/7-reports/latest-comparison.md
+agent-benchmark/7-reports/1-comparisons/best-candidates.md
+agent-benchmark/7-reports/0-baselines/*/*/*.md
+agent-benchmark/7-reports/1-comparisons/*/*.md
 
 # Generated prompt-optimization outputs.
-agent-benchmark/prompts/best-candidate.md
-agent-benchmark/prompts/best-candidates.md
-agent-benchmark/prompts/best-candidates/
-agent-benchmark/prompts/variants/metadata.md
-agent-benchmark/prompts/variants/agents-patches/
-agent-benchmark/prompts/variants/claude-patches/
+agent-benchmark/5-prompts/0-agents/patches/best-candidates.md
+agent-benchmark/5-prompts/0-agents/patches/vibe/*.md
+agent-benchmark/5-prompts/0-agents/patches/claude-code/*.md
+!agent-benchmark/5-prompts/0-agents/patches/*/.gitkeep
+
+# Evaluator-instantiated experiment manifests are run-specific by default.
+agent-benchmark/6-runs/0-experiments/*.env
+!agent-benchmark/6-runs/0-experiments/README.md
+
+# git
+.gitkeep

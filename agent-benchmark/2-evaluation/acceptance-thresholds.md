@@ -25,7 +25,7 @@ rubric.
 - **Cumulative log progress delta**:
   `ln((100 - initial_candidate_score) / (100 - latest_candidate_score))`.
 - **Baseline assessment**: frozen baseline score and findings persisted under
-  `reports/baselines/<scenario-id>/<baseline-run-id>.assessment.md`.
+  `7-reports/0-baselines/<agent-key>/<scenario-id>/`.
 
 ## Minimum Candidate Acceptance
 
@@ -140,8 +140,9 @@ If two accepted patches have the same score, choose the one with:
 3. Simpler prompt changes.
 4. Earlier version number.
 
-Record selected patches in `prompts/best-candidates.md`, with one row per
-candidate agent and patch family.
+Record selected patches in `7-reports/1-comparisons/best-candidates.md`, with
+one row per candidate agent and patch family. Create the file only after a new
+candidate comparison selects a best candidate.
 
 ## Required Stop Record
 

@@ -1,0 +1,166 @@
+active_model = "{{active_model}}"
+vim_keybindings = false
+disable_welcome_banner_animation = false
+displayed_workdir = ""
+auto_compact_threshold = 200000
+context_warnings = false
+textual_theme = "flexoki"
+instructions = ""
+system_prompt_id = "{{system_prompt_id}}"
+include_commit_signature = true
+include_model_info = true
+include_project_context = true
+include_prompt_detail = true
+enable_update_checks = true
+api_timeout = {{api_timeout}}
+tool_paths = {{tool_paths}}
+mcp_servers = {{mcp_servers}}
+enabled_tools = {{enabled_tools}}
+disabled_tools = {{disabled_tools}}
+
+[[providers]]
+name = "{{provider_name}}"
+api_base = "{{provider_api_base}}"
+api_key_env_var = "{{provider_api_key_env_var}}"
+api_style = "{{provider_api_style}}"
+backend = "{{provider_backend}}"
+
+[[models]]
+name = "{{model_name}}"
+provider = "{{model_provider}}"
+alias = "{{model_alias}}"
+temperature = {{model_temperature}}
+input_price = {{model_input_price}}
+output_price = {{model_output_price}}
+thinking = "{{model_thinking}}"
+
+[project_context]
+max_chars = {{project_context_max_chars}}
+default_commit_count = {{project_context_default_commit_count}}
+max_doc_bytes = {{project_context_max_doc_bytes}}
+truncation_buffer = {{project_context_truncation_buffer}}
+max_depth = {{project_context_max_depth}}
+max_files = {{project_context_max_files}}
+max_dirs_per_level = {{project_context_max_dirs_per_level}}
+timeout_seconds = {{project_context_timeout_seconds}}
+
+[session_logging]
+save_dir = "{{session_save_dir}}"
+session_prefix = "{{session_prefix}}"
+enabled = {{session_logging_enabled}}
+
+[tools.search_replace]
+permission = "{{search_replace_permission}}"
+allowlist = []
+denylist = []
+max_content_size = {{search_replace_max_content_size}}
+create_backup = {{search_replace_create_backup}}
+fuzzy_threshold = {{search_replace_fuzzy_threshold}}
+
+[tools.bash]
+permission = "{{bash_permission}}"
+allowlist = [
+    "cat",
+    "echo",
+    "file",
+    "find",
+    "git diff",
+    "git log",
+    "git status",
+    "head",
+    "ls",
+    "npm create",
+    "pwd",
+    "stat",
+    "tail",
+    "tree",
+    "uname",
+    "wc",
+    "which",
+    "whoami",
+]
+denylist = [
+    "gdb",
+    "pdb",
+    "passwd",
+    "nano",
+    "vim",
+    "vi",
+    "emacs",
+    "bash -i",
+    "sh -i",
+    "zsh -i",
+    "fish -i",
+    "dash -i",
+    "screen",
+    "tmux",
+]
+max_output_bytes = {{bash_max_output_bytes}}
+default_timeout = {{bash_default_timeout}}
+denylist_standalone = [
+    "python",
+    "python3",
+    "ipython",
+    "bash",
+    "sh",
+    "nohup",
+    "vi",
+    "vim",
+    "emacs",
+    "nano",
+    "su",
+]
+
+[tools.grep]
+permission = "{{grep_permission}}"
+allowlist = []
+denylist = []
+max_output_bytes = {{grep_max_output_bytes}}
+default_max_matches = {{grep_default_max_matches}}
+default_timeout = {{grep_default_timeout}}
+exclude_patterns = [
+    ".venv/",
+    "venv/",
+    ".env/",
+    "env/",
+    "node_modules/",
+    ".git/",
+    "__pycache__/",
+    ".pytest_cache/",
+    ".mypy_cache/",
+    ".tox/",
+    ".nox/",
+    ".coverage/",
+    "htmlcov/",
+    "dist/",
+    "build/",
+    ".idea/",
+    ".vscode/",
+    "*.egg-info",
+    "*.pyc",
+    "*.pyo",
+    "*.pyd",
+    ".DS_Store",
+    "Thumbs.db",
+]
+codeignore_file = ".vibeignore"
+
+[tools.read_file]
+permission = "{{read_file_permission}}"
+allowlist = []
+denylist = []
+max_read_bytes = {{read_file_max_read_bytes}}
+max_state_history = {{read_file_max_state_history}}
+
+[tools.todo]
+permission = "{{todo_permission}}"
+allowlist = []
+denylist = []
+max_todos = {{todo_max_todos}}
+
+[tools.write_file]
+permission = "{{write_file_permission}}"
+allowlist = []
+denylist = []
+max_write_bytes = {{write_file_max_write_bytes}}
+create_parent_dirs = {{write_file_create_parent_dirs}}
