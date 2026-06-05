@@ -15,8 +15,9 @@ agent-benchmark/7-reports/1-comparisons/*/*.md
 agent-benchmark/5-prompts/0-agents/patches/best-candidates.md
 agent-benchmark/5-prompts/0-agents/patches/vibe/*.md
 agent-benchmark/5-prompts/0-agents/patches/claude-code/*.md
-!agent-benchmark/5-prompts/0-agents/patches/*/.gitkeep
 agent-benchmark/5-prompts/0-agents/metadata.md
+!agent-benchmark/5-prompts/0-agents/patches/*/.gitkeep
+
 
 # Evaluator-instantiated experiment manifests are run-specific by default.
 agent-benchmark/6-runs/0-experiments/*.env
