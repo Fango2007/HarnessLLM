@@ -47,9 +47,11 @@ Run sequence:
    candidate output.
 10. Use the `boost-agent-outcomes` skill to compare the candidate output
     against the frozen baseline assessment. Do not rescore the baseline during
-    candidate iteration.
+    candidate iteration. Classify each material finding against the baseline
+    before scoring the candidate.
 11. If the comparison finds actionable candidate improvements, create the next
-    prepared patch under `5-prompts/0-agents/patches/<agent-key>/`.
+    prepared patch under `5-prompts/0-agents/patches/<agent-key>/`. Each patch
+    should target one scoring category or one tightly related issue cluster.
 12. Record the prepared next patch in the comparison report.
 13. Append the score and decision to `7-reports/score-ledger.jsonl`.
 14. Update `7-reports/latest-comparison.md`.
@@ -92,6 +94,13 @@ runner append the selected patch into the run-local instruction file.
 Do not edit a baseline assessment after it has been cited by a comparison
 report. If baseline scoring needs correction, create a new assessment with a
 new assessment ID and explicitly supersede the old one.
+
+Candidate patch iterations should be small enough to diagnose. Once workflow
+completion is reliable, do not bundle unrelated fixes across multiple scoring
+categories in one patch. Prefer one category-level objective per patch, such as
+validation discipline, scenario coverage, edge-case resolution, or success
+criteria. Bundle multiple instructions only when they are inseparable parts of
+the same defect or when a workflow blocker prevents any useful scoring.
 
 ## Experiment Manifests
 

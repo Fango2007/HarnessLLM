@@ -49,27 +49,69 @@ Each comparison uses:
 7. Read the candidate artifacts required by the selected skill. For
    `/speckit-specify`, this normally includes `spec.md` and
    `checklists/requirements.md`.
-8. Compare candidate findings against the frozen baseline findings before
-   scoring:
-   - baseline-only,
-   - candidate-only,
-   - shared by both outputs,
-   - unclear.
-9. Penalize shared defects consistently. Do not use a defect as evidence that
-   the candidate is worse when the baseline has the same defect.
-10. Inspect local agent logs only when needed to explain workflow behavior,
+8. For every material candidate issue, compare against the frozen baseline
+   assessment before scoring. If the assessment does not mention the issue and
+   it could plausibly be shared, inspect the relevant baseline artifact section.
+9. Classify each material finding using the finding-classification rules below.
+10. Penalize shared defects consistently. Do not use a defect as evidence that
+    the candidate is worse when the baseline has the same defect.
+11. Inspect local agent logs only when needed to explain workflow behavior,
     stalls, tool failures, or missing artifacts.
-11. Score only the candidate using `scoring-rubric.md`; copy the baseline score,
+12. Score only the candidate using `scoring-rubric.md`; copy the baseline score,
     category breakdown, findings, and assessment ID from the frozen baseline
     assessment.
-12. Use `boost-agent-outcomes` with this comparison frame: evaluate how well
+13. Use `boost-agent-outcomes` with this comparison frame: evaluate how well
     each output follows the selected Spec Kit skill for the same scenario and
     skill command, not a stricter or different artifact preference.
-13. Apply `acceptance-thresholds.md` to decide whether to stop or continue.
-14. Write the comparison report under
+14. Apply `acceptance-thresholds.md` to decide whether to stop or continue.
+15. Write the comparison report under
     `7-reports/1-comparisons/<agent-key>/`.
-15. Append the score record to `7-reports/score-ledger.jsonl`.
-16. Update `7-reports/latest-comparison.md`.
+16. Append the score record to `7-reports/score-ledger.jsonl`.
+17. Update `7-reports/latest-comparison.md`.
+
+## Finding Classification
+
+Before assigning candidate scores, build a finding-classification table for all
+material issues and strengths that affect scoring.
+
+Each row must answer:
+
+- **Finding**: the concrete issue or strength being evaluated.
+- **Baseline evidence**: where the baseline assessment or artifact has the same
+  pattern, a different pattern, or no comparable pattern.
+- **Candidate evidence**: where the candidate artifact shows the pattern.
+- **Classification**:
+  - `baseline-only-strength`: baseline includes useful behavior that is optional
+    or inferred rather than explicit in the scenario.
+  - `baseline-only-defect`: baseline has a defect the candidate avoids.
+  - `candidate-only-defect`: candidate has a defect not present in the baseline.
+  - `shared-same-severity`: both outputs have materially equivalent defects.
+  - `candidate-worse-than-baseline`: both outputs have the issue, but the
+    candidate version is more specific, contradictory, harmful, or broader.
+  - `candidate-better-than-baseline`: both outputs address the area, and the
+    candidate is materially clearer or more complete.
+  - `not-scenario-relevant`: the difference is a preference or extra behavior
+    not required by the scenario, skill, or rubric.
+- **Scoring effect**: category affected and whether the issue changes the
+  candidate score.
+
+Do not score directly from the candidate artifact in isolation. Classification
+comes first; scoring follows from the classification.
+
+Use these scoring rules:
+
+- `candidate-only-defect` and `candidate-worse-than-baseline` can reduce the
+  candidate score.
+- `shared-same-severity` must not be used as candidate-only criticism. Either
+  exclude it from relative criticism or record it as a shared issue.
+- `baseline-only-strength` can explain why the baseline is stronger, but only
+  penalize the candidate when the behavior is relevant under the scenario,
+  loaded skill, and rubric.
+- `not-scenario-relevant` should not affect score.
+
+If the classification reveals that the frozen baseline assessment missed a
+material issue, follow the baseline-correction rule below before using that
+issue to drive future optimization.
 
 ## Fairness Rule
 
@@ -91,6 +133,34 @@ When a baseline and candidate share a defect, the comparison report must either
 penalize both outputs under the same rubric category or explicitly exclude the
 defect from the relative candidate-vs-baseline criticism and record it as a
 shared harness/process issue.
+
+Shared-defect classification must distinguish broad shared scope assumptions
+from materially stronger candidate commitments. For example, if the baseline
+already has a single-device/browser assumption, a candidate should not be
+penalized merely for comparable browser/device phrasing. Penalize only when the
+candidate adds more specific implementation commitments, such as a storage
+mechanism, framework, API, database, sync model, capacity target, or an internal
+contradiction that the baseline does not share.
+
+## Baseline Correction Rule
+
+Do not edit a frozen baseline assessment in place after it has been cited by a
+candidate comparison.
+
+If a later comparison discovers a baseline issue that the assessment missed:
+
+- If the missed issue does not materially affect category scores or candidate
+  decisions, record it in the candidate comparison as a newly discovered shared
+  issue and leave the baseline assessment unchanged.
+- If the missed issue affects baseline category scores, shared-defect
+  classification, acceptance decisions, or future patch direction, create a new
+  versioned baseline assessment with a new assessment ID. The new assessment
+  must cite the same baseline run/artifacts, include corrected category scores
+  and findings, and set `Supersedes` to the previous assessment ID.
+- Future candidate comparisons must cite the newest active baseline assessment.
+- Existing comparison reports remain historical records. Mark them superseded
+  only when the correction changes their score, decision, or selected-patch
+  outcome.
 
 ## Report Naming
 
@@ -128,6 +198,10 @@ Each comparison report must include:
 - Install/version checks from `_benchmark/install-checks/`.
 - Baseline score.
 - Candidate score.
+- A `## Score` section with category-level scoring details that show baseline
+  score and candidate score side by side for every rubric category.
+- A finding-classification table with baseline evidence, candidate evidence,
+  classification, and scoring effect for all material scored findings.
 - Score delta from previous candidate, if any.
 - Findings ordered by severity.
 - `boost-agent-outcomes` summary.
@@ -262,3 +336,33 @@ The selected patch is appended to run-local `AGENTS.md`.
 
 For Claude Code candidate runs, the selected patch is appended to the run-local
 `CLAUDE.md` created by Spec Kit.
+
+Each new candidate patch must declare one primary optimization target:
+
+- workflow completion
+- primary artifact quality
+- scenario and coverage quality
+- scope, assumptions, risks, and edge cases
+- validation criteria and readiness
+- validation discipline
+
+After workflow completion is reliable, a patch should address one target
+category at a time. Do not bundle unrelated instructions across multiple
+categories merely because they all appear in the latest comparison report.
+Bundling is allowed only when the instructions are inseparable parts of one
+defect or when a workflow blocker prevents category-level scoring.
+
+Every comparison report that prepares a next patch must include:
+
+- the target category,
+- the specific classified finding the patch addresses,
+- the expected scoring effect,
+- why the patch is narrow enough to diagnose after one replay,
+- and any findings intentionally deferred to later iterations.
+
+If a patch improves its declared target category but does not improve total
+score, do not discard the result as useless. Record whether the patch should be
+retained as a category-improvement patch, whether it is selected as the best
+full candidate, and which regressions blocked full promotion. Category-retained
+patches can inform later composition experiments, but composition should be
+tested explicitly rather than assumed.

@@ -44,6 +44,12 @@ Before scoring, define the selected skill's scoring profile:
 - validation/readiness dimension,
 - any skill-specific category mapping notes.
 
+For candidate comparisons, do not score from the candidate artifact alone.
+First classify material findings against the frozen baseline using
+`comparison-method.md`; then assign candidate category scores. Shared defects
+must not become candidate-only penalties unless the candidate version is
+materially worse than the baseline version.
+
 Use the generic point allocation below for every skill, but interpret each
 category through that selected skill profile.
 

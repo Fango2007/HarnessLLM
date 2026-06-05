@@ -49,6 +49,12 @@ If the baseline assessment is found to be wrong, do not edit it in place after
 it has been used. Create a new versioned baseline assessment, record what it
 supersedes, and use the new assessment for later comparisons.
 
+If a candidate comparison discovers a baseline issue that was missing from the
+frozen assessment, classify whether the omission is material before changing the
+optimization loop. Non-material shared issues can be noted in the comparison.
+Material baseline omissions require a new versioned baseline assessment before
+future candidate decisions rely on that issue.
+
 If the candidate fails to complete the workflow or misses required artifacts,
 the run is not acceptable regardless of score.
 
@@ -78,6 +84,32 @@ counts more when the candidate is already strong. For example, a move from 84 to
 `0.1335`, so it should be recognized as a real gain when it addresses material
 rubric issues.
 
+## Category Improvement Retention
+
+A patch can be worth keeping even when it is not the new best full candidate.
+If a narrow patch improves its declared target category without breaking
+workflow completion, retain it as a category-improvement patch when all of these
+are true:
+
+- The target category score improves relative to the previous accepted
+  candidate or reaches baseline parity.
+- The patch was narrow enough that the category improvement is diagnosable.
+- Any regressions in other categories are recorded and classified.
+- The patch does not introduce critical defects or missing required artifacts.
+
+Retained category-improvement patches are reusable evidence and possible
+ingredients for a later composition experiment. They are not automatically the
+selected best candidate. The selected best full candidate still depends on total
+score, acceptance constraints, workflow reliability, and simplicity.
+
+When a category-improvement patch is retained but not selected, record both
+facts explicitly:
+
+- `retain_category_patch`: yes
+- `selected_best_candidate`: no
+- target category and category-score delta
+- offsetting regressions or deferred findings
+
 ## Continue Criteria
 
 Continue the optimization loop when all of these are true:
@@ -99,6 +131,12 @@ Candidate-patch-level improvements must be compatible with the loaded Spec Kit
 skill. Do not continue optimization based on a proposed patch that forbids a
 skill-required or skill-encouraged pattern unless the framework first changes
 the skill/template or scoring rubric.
+
+After workflow completion is reliable, continue with a new patch only when the
+patch has one primary target category or one tightly related issue cluster.
+Avoid patches that attempt to fix every remaining finding at once. Broad patches
+make regressions hard to diagnose and should be split into category-level
+iterations unless the remaining findings are inseparable parts of one defect.
 
 ## Stop Criteria
 
@@ -155,6 +193,9 @@ When the loop stops, the final comparison report must include:
 - Candidate patch, if any.
 - Baseline score.
 - Candidate score.
+- A `## Score` section with baseline and candidate scores shown together for
+  every rubric category.
+- Finding classifications for all material scored findings.
 - Score delta from the previous candidate.
 - Whether the score regressed.
 - Relative score delta from the previous candidate.
@@ -165,5 +206,7 @@ When the loop stops, the final comparison report must include:
 - Score ledger record ID.
 - `boost-agent-outcomes` summary.
 - Shared-defect classification summary.
+- Next-patch target category and deferred findings, if another patch is
+  recommended.
 - Stop reason.
 - Whether the selected candidate is accepted.
